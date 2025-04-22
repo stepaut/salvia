@@ -1,40 +1,52 @@
-﻿using salvia.Data.Dto;
-using System;
+﻿using Mapster;
+using Microsoft.EntityFrameworkCore;
+using salvia.Data.Dto;
+using salvia.Data.Entities;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace salvia.Data.Repositories;
 
 internal class DiseaseRepository(DiseaseDbContext _context) : IDiseaseRepository
 {
-    public Task Create(DiseaseDto item)
+    public async Task Create(DiseaseDto item)
     {
-        throw new NotImplementedException();
+        var entity = item.Adapt<DiseaseEntity>();
+        await _context.Diseases.AddAsync(entity);
     }
 
-    public Task Delete(int id)
+    public async Task Delete(int id)
     {
-        throw new NotImplementedException();
+        await _context.Diseases.Where(x => x.Id == id).ExecuteDeleteAsync();
     }
 
-    public Task Save()
+    public async Task Save()
     {
-        throw new NotImplementedException();
+        await _context.SaveChangesAsync();
     }
 
-    public Task<DiseaseDto?> TryGetItem(int id)
+    public async Task<DiseaseDto?> TryGetItem(int id)
     {
-        throw new NotImplementedException();
+        var entity = await _context.Diseases.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+        return entity.Adapt<DiseaseDto>();
     }
 
     public Task Update(DiseaseDto item)
     {
-        throw new NotImplementedException();
+        var entity = item.Adapt<DiseaseEntity>();
+        _context.Diseases.Update(entity);
+
+        return Task.CompletedTask;
     }
 
-    public Task<ICollection<DiseaseDto>> GetAll(long commonKey)
+    public async Task<ICollection<DiseaseDto>> GetAll(long commonKey)
     {
-        throw new NotImplementedException();
+        return await _context.Diseases
+                            .Where(x => x.UserId == commonKey)
+                            .AsNoTracking()
+                            .Select(x => x.Adapt<DiseaseDto>())
+                            .ToListAsync();
     }
 }
 

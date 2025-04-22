@@ -5,10 +5,16 @@ namespace salvia.Core;
 
 internal class TemperatureService(ITemperatureRepository _temperatureRepository, IDiseaseService _diseaseService, IDiseaseRepository _diseaseRepository) : ITemperatureService
 {
-    public async Task AddTemperature(DateTime date, float temperature, long user)
+    public async Task<bool> AddTemperature(DateTime date, float temperature, long user)
     {
+        var diseaseCreated = false;
         var currentDisease = await _diseaseService.GetCurrentDisease(user);
-        currentDisease ??= await _diseaseService.AddNewAndFinishCurrentDisease(date, user);
+
+        if (currentDisease is null)
+        {
+            currentDisease = await _diseaseService.AddNewAndFinishCurrentDisease(date, user);
+            diseaseCreated = true;
+        }
 
         var temperatureDto = new TemperatureDto()
         {
@@ -19,6 +25,8 @@ internal class TemperatureService(ITemperatureRepository _temperatureRepository,
 
         await _temperatureRepository.Create(temperatureDto);
         await _temperatureRepository.Save();
+
+        return diseaseCreated;
     }
 
     public async Task<ICollection<TemperatureDto>> GetAllTemperaturesInDisease(int disease, long user)
@@ -29,7 +37,7 @@ internal class TemperatureService(ITemperatureRepository _temperatureRepository,
             throw new Exception($"Disease with id {disease} doesn't exist.");
         }
 
-        if (diseaseDto.Id != user)
+        if (diseaseDto.UserId != user)
         {
             throw new Exception($"Disease with id {disease} doesn't belong to user {user}.");
         }

@@ -1,39 +1,51 @@
-﻿using salvia.Data.Dto;
+﻿using Mapster;
+using Microsoft.EntityFrameworkCore;
+using salvia.Data.Dto;
+using salvia.Data.Entities;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace salvia.Data.Repositories;
 
-internal class TemperatureRepository : ITemperatureRepository
+internal class TemperatureRepository(DiseaseDbContext _context) : ITemperatureRepository
 {
-    public Task Create(TemperatureDto item)
+    public async Task Create(TemperatureDto item)
     {
-        throw new System.NotImplementedException();
+        var entity = item.Adapt<TemperatureEntity>();
+        await _context.Temperatures.AddAsync(entity);
     }
 
-    public Task Delete(int id)
+    public async Task Delete(int id)
     {
-        throw new System.NotImplementedException();
+        await _context.Temperatures.Where(x => x.Id == id).ExecuteDeleteAsync();
     }
 
-    public Task Save()
+    public async Task Save()
     {
-        throw new System.NotImplementedException();
+        await _context.SaveChangesAsync();
     }
 
-    public Task<TemperatureDto?> TryGetItem(int id)
+    public async Task<TemperatureDto?> TryGetItem(int id)
     {
-        throw new System.NotImplementedException();
+        var entity = await _context.Temperatures.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+        return entity.Adapt<TemperatureDto>();
     }
 
     public Task Update(TemperatureDto item)
     {
-        throw new System.NotImplementedException();
+        var entity = item.Adapt<TemperatureEntity>();
+        _context.Temperatures.Update(entity);
+
+        return Task.CompletedTask;
     }
 
-    public Task<ICollection<TemperatureDto>> GetAll(int commonKey)
+    public async Task<ICollection<TemperatureDto>> GetAll(int commonKey)
     {
-        throw new System.NotImplementedException();
+        return await _context.Temperatures.AsNoTracking()
+                            .Where(x => x.DiseaseId == commonKey)
+                            .Select(x => x.Adapt<TemperatureDto>())
+                            .ToListAsync();
     }
 }
 

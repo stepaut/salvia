@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace salvia.Data.Entities;
 
-internal class DiseaseEntry
+internal class DiseaseEntity
 {
     public int Id { get; set; }
 
@@ -12,5 +12,5 @@ internal class DiseaseEntry
 
     public long UserId { get; set; }
 
-    public ICollection<TemperatureEntry> Temperatures { get; set; } = [];
+    public ICollection<TemperatureEntity> Temperatures { get; set; } = [];
 }

@@ -6,6 +6,7 @@ public static class ServicesExtension
 {
     public static void AddTelegramApiServices(this IServiceCollection services)
     {
-        services.AddTransient<ITelegramApi, TelegramApi>();
+        services.AddSingleton<ITelegramApi, TelegramApi>();
+        services.AddTransient<ITelegramUpdateHandler, TelegramUpdateHandler>();
     }
 }

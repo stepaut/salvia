@@ -4,10 +4,15 @@ using salvia.Data.Entities;
 
 namespace salvia.Data;
 
-public class DiseaseDbContext(DbContextOptions<DiseaseDbContext> dbOptions) : DbContext(dbOptions)
+public class DiseaseDbContext : DbContext
 {
-    internal DbSet<DiseaseEntry> Diseases { get; set; }
-    internal DbSet<TemperatureEntry> Temperatures { get; set; }
+    internal DbSet<DiseaseEntity> Diseases { get; set; }
+    internal DbSet<TemperatureEntity> Temperatures { get; set; }
+
+    public DiseaseDbContext(DbContextOptions<DiseaseDbContext> dbOptions) : base(dbOptions)
+    {
+        ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

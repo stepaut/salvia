@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using salvia.Core;
 using salvia.Data;
 using salvia.Telegram;
+using System;
 using System.Threading.Tasks;
 
 namespace salvia;
@@ -26,6 +27,8 @@ class Program
                 .AddEnvironmentVariables()
                 .AddUserSecrets<Program>();
         });
+
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
         builder.ConfigureServices((context, services) =>
         {

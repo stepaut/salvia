@@ -46,7 +46,7 @@ internal class DiseaseService(IDiseaseRepository _diseaseRepository) : IDiseaseS
         }
 
         var last = diseases.OrderBy(x => x.Start).Last();
-        if (last.End is null)
+        if (last.End is not null)
         {
             return null;
         }

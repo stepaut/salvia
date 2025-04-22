@@ -7,7 +7,7 @@ public static class ServicesExtension
 {
     public static void AddDataServices(this IServiceCollection services)
     {
-        services.AddTransient<IDiseaseRepository, DiseaseRepository>();
-        services.AddTransient<ITemperatureRepository, TemperatureRepository>();
+        services.AddScoped<IDiseaseRepository, DiseaseRepository>();
+        services.AddScoped<ITemperatureRepository, TemperatureRepository>();
     }
 }

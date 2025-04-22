@@ -2,7 +2,7 @@
 
 namespace salvia.Data.Entities;
 
-internal class TemperatureEntry
+internal class TemperatureEntity
 {
     public int Id { get; set; }
 
@@ -10,5 +10,5 @@ internal class TemperatureEntry
     public DateTime Date { get; set; }
 
     public int DiseaseId { get; set; }
-    public DiseaseEntry Disease { get; set; }
+    public DiseaseEntity Disease { get; set; }
 }
