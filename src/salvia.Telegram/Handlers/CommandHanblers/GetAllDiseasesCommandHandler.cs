@@ -12,6 +12,13 @@ internal sealed class GetAllDiseasesCommandHandler : BotCommandHanblerBase
     protected override async Task Hanlde()
     {
         var diseases = await _diseaseService.GetAllDiseases(_parameters.UserId);
-        _reply = string.Join("\n", diseases.OrderBy(x => x.Start));
+        if (diseases.Any())
+        {
+            _reply = string.Join("\n", diseases.OrderBy(x => x.Start));
+        }
+        else
+        {
+            _reply = BotResources.R_NO_DISEASES;
+        }
     }
 }

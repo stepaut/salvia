@@ -1,7 +1,5 @@
-﻿using salvia.Core;
-using System;
+﻿using System;
 using System.Threading.Tasks;
-using Telegram.Bot.Types;
 using static salvia.Telegram.BotResources;
 
 namespace salvia.Telegram.Handlers.CommandHanblers;

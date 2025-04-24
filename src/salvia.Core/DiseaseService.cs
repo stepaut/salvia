@@ -31,10 +31,18 @@ internal class DiseaseService(IDiseaseRepository _diseaseRepository) : IDiseaseS
             return false;
         }
 
-        current.End = end;
-
-        await _diseaseRepository.Update(current);
+        if (current.TempsCount == 0)
+        {
+            await _diseaseRepository.Delete(current.Id);
+        }
+        else
+        {
+            current.End = end;
+            await _diseaseRepository.Update(current);
+        }
+        
         await _diseaseRepository.Save();
+
         return true;
     }
 

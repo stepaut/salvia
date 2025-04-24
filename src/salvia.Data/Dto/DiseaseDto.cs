@@ -8,6 +8,7 @@ public class DiseaseDto
     public DateTime Start { get; set; }
     public DateTime? End { get; set; }
     public long UserId { get; set; }
+    public int TempsCount { get; set; }
 
     public override string ToString()
     {

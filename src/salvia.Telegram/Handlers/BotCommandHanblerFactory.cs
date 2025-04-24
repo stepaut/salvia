@@ -9,8 +9,6 @@ internal static class BotCommandHanblerFactory
     {
         switch (enviroment.Parameters.Command)
         {
-            case C_START:
-                return new StartCommandHandler(enviroment);
             case C_START_DISEASE:
                 return new StartDiseaseCommandHandler(enviroment);
             case C_FINISH_DISEASE:
@@ -21,8 +19,10 @@ internal static class BotCommandHanblerFactory
                 return new GetTempsCommandHandler(enviroment);
             case C_GET_ALL_DISEASES:
                 return new GetAllDiseasesCommandHandler(enviroment);
+            case C_START:
+            case C_HELP:
             default:
-                return new DefaultCommandHanbler(enviroment);
+                return new SimpleReplyCommandHandler(enviroment);
         }
     }
 }

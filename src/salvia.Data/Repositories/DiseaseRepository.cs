@@ -29,7 +29,15 @@ internal class DiseaseRepository(DiseaseDbContext _context) : IDiseaseRepository
     public async Task<DiseaseDto?> TryGetItem(int id)
     {
         var entity = await _context.Diseases.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
-        return entity.Adapt<DiseaseDto>();
+        if (entity is null)
+        {
+            return null;
+        }
+
+        var dto = entity.Adapt<DiseaseDto>();
+        dto.TempsCount = entity.Temperatures.Count;
+
+        return dto;
     }
 
     public Task Update(DiseaseDto item)
