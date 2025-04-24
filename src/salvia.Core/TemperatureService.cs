@@ -3,8 +3,21 @@ using salvia.Data.Repositories;
 
 namespace salvia.Core;
 
-internal class TemperatureService(ITemperatureRepository _temperatureRepository, IDiseaseService _diseaseService, IDiseaseRepository _diseaseRepository) : ITemperatureService
+internal class TemperatureService : ITemperatureService
 {
+    private readonly ITemperatureRepository _temperatureRepository;
+    private readonly IDiseaseService _diseaseService;
+    private readonly IDiseaseRepository _diseaseRepository;
+
+
+    public TemperatureService(ITemperatureRepository temperatureRepository, IDiseaseService diseaseService, IDiseaseRepository diseaseRepository)
+    {
+        _temperatureRepository = temperatureRepository;
+        _diseaseService = diseaseService;
+        _diseaseRepository = diseaseRepository;
+    }
+
+
     public async Task<bool> AddTemperature(DateTime date, float temperature, long user)
     {
         var diseaseCreated = false;

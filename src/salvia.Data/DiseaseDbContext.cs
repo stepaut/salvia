@@ -6,6 +6,7 @@ namespace salvia.Data;
 
 public class DiseaseDbContext : DbContext
 {
+    internal DbSet<UserEntity> Users { get; set; }
     internal DbSet<DiseaseEntity> Diseases { get; set; }
     internal DbSet<TemperatureEntity> Temperatures { get; set; }
 
@@ -18,6 +19,7 @@ public class DiseaseDbContext : DbContext
     {
         modelBuilder.ApplyConfiguration(new DiseaseConfiguration());
         modelBuilder.ApplyConfiguration(new TemperatureConfiguration());
+        modelBuilder.ApplyConfiguration(new UserConfiguration());
 
         base.OnModelCreating(modelBuilder);
     }

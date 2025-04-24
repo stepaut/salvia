@@ -49,41 +49,5 @@ class Program
 
         var telegram = host.Services.GetRequiredService<ITelegramApi>();
         await telegram.Run();
-
-        //var configuration = CreateConfiguration(args);
-        //var services = CreateServiceProvider(configuration);
-
-        //var telegram = services.GetRequiredService<ITelegramApi>();
-        //await telegram.Run();
     }
-
-    //private static IServiceProvider CreateServiceProvider(IConfigurationRoot configuration)
-    //{
-    //    var services = new ServiceCollection();
-
-    //    services.Configure<BotConfiguration>(configuration.GetSection(nameof(BotConfiguration)));
-
-    //    services.AddDbContext<DiseaseDbContext>(
-    //        options =>
-    //        {
-    //            options.UseNpgsql(configuration.GetConnectionString(nameof(DiseaseDbContext)));
-    //        });
-
-    //    services.AddTelegramApiServices();
-
-    //    return services.BuildServiceProvider();
-    //}
-
-    //private static IConfigurationRoot CreateConfiguration(string[] args)
-    //{
-    //    var builder = new ConfigurationBuilder();
-
-    //    builder
-    //        .SetBasePath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location))
-    //        .AddJsonFile("appSettings.json", false, false)
-    //        .AddEnvironmentVariables()
-    //        .AddUserSecrets<Program>();
-
-    //    return builder.Build();
-    //}
 }

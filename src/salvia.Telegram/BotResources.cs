@@ -29,5 +29,6 @@ internal static class BotResources
     public const string R_DISEASE_NOT_STARTED = $"Disease not started. Start new disease with {C_START_DISEASE}";
     public const string R_DISEASE_NOT_FOUND = "Disease not found";
     public const string R_NO_TEMPS = "No temperatures in disease";
+    public const string R_NOT_ALLOWED = "You are not allowed to using this bot";
     #endregion
 }
