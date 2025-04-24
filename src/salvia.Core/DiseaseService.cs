@@ -23,18 +23,19 @@ internal class DiseaseService(IDiseaseRepository _diseaseRepository) : IDiseaseS
         return createdDisease!;
     }
 
-    public async Task FinishCurrentDisease(DateTime end, long user)
+    public async Task<bool> FinishCurrentDisease(DateTime end, long user)
     {
         var current = await GetCurrentDisease(user);
         if (current is null)
         {
-            return;
+            return false;
         }
 
         current.End = end;
 
         await _diseaseRepository.Update(current);
         await _diseaseRepository.Save();
+        return true;
     }
 
     public async Task<DiseaseDto?> GetCurrentDisease(long user)
@@ -52,5 +53,26 @@ internal class DiseaseService(IDiseaseRepository _diseaseRepository) : IDiseaseS
         }
 
         return last;
+    }
+
+    public async Task<ICollection<DiseaseDto>> GetAllDiseases(long user)
+    {
+        return await _diseaseRepository.GetAll(user);
+    }
+
+    public async Task<DiseaseDto?> GetDiseaseById(int id, long user)
+    {
+        var dis = await _diseaseRepository.TryGetItem(id);
+        if (dis is null)
+        {
+            return null;
+        }
+
+        if (dis.UserId != user)
+        {
+            return null;
+        }
+
+        return dis;
     }
 }

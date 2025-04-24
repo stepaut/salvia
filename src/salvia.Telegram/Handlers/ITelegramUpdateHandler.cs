@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Telegram.Bot.Types;
 
-namespace salvia.Telegram;
+namespace salvia.Telegram.Handlers;
 
 public interface ITelegramUpdateHandler
 {

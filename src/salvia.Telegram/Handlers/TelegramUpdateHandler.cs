@@ -1,13 +1,11 @@
 ﻿using salvia.Core;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
 using static salvia.Telegram.BotResources;
 
-namespace salvia.Telegram;
+namespace salvia.Telegram.Handlers;
 
 internal class TelegramUpdateHandler : ITelegramUpdateHandler
 {
@@ -46,9 +44,6 @@ internal class TelegramUpdateHandler : ITelegramUpdateHandler
 
     private async Task<BotResponse> ResolveTextMessage(User user, string? message)
     {
-        string reply = string.Empty;
-        ReplyMarkup? replyMarkup = null;
-
         var elements = message?.Split(' ');
         if (elements is null || elements.Length == 0)
         {
@@ -56,61 +51,21 @@ internal class TelegramUpdateHandler : ITelegramUpdateHandler
         }
 
         var command = elements[0];
+        var parameter = elements.Length >= 2 ? elements[1] : null;
 
-        switch (command)
+        var parameters = new BotCommandParameters()
         {
-            case C_START:
-                reply = R_HELLO;
-                break;
+            Command = command,
+            Parameter = parameter,
+            UserId = user.Id,
+        };
 
-            case C_START_DISEASE:
-                await _diseaseService.AddNewAndFinishCurrentDisease(DateTime.Now, user.Id);
-                reply = R_DISEASE_STARTED;
-                break;
+        var enviroment = new BotCommandEnviroment(parameters, _diseaseService, _temperatureService);
 
-            case C_FINISH_DISEASE:
-                await _diseaseService.FinishCurrentDisease(DateTime.Now, user.Id);
-                reply = R_DISEASE_FINISHD;
-                break;
+        var handler = BotCommandHanblerFactory.Create(enviroment);
+        var response = await handler.HandleCommand();
 
-
-            case C_ADD_TEMP:
-                var temperature = elements.Length >= 2 ? elements[1] : null;
-                if (float.TryParse(temperature, out var value))
-                {
-                    var diseaseCreated = await _temperatureService.AddTemperature(DateTime.Now, value, user.Id);
-
-                    reply = R_TEMP_ADDED;
-
-                    if (diseaseCreated)
-                    {
-                        reply = $"{R_DISEASE_STARTED}\n{R_TEMP_ADDED}";
-                    }
-                }
-                else
-                {
-                    reply = R_DEFAULT;
-                }
-                break;
-
-            case C_GET_TEMPS:
-                var dis = await _diseaseService.GetCurrentDisease(user.Id);
-                if (dis is null)
-                {
-                    throw new Exception("dis is null");
-                }
-
-                var temps = await _temperatureService.GetAllTemperaturesInDisease(dis.Id, user.Id);
-                reply = string.Join(", ", temps.OrderBy(x=>x.Date).Select(x => x.Temperature));
-
-                break;
-
-            default:
-                reply = R_DEFAULT;
-                break;
-        }
-
-        return new BotResponse() { Message = reply };
+        return response;
     }
 
     private async Task<BotResponse> ResolveMessage(Update update)

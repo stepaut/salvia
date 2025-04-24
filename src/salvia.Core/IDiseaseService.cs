@@ -5,6 +5,18 @@ namespace salvia.Core;
 public interface IDiseaseService
 {
     Task<DiseaseDto> AddNewAndFinishCurrentDisease(DateTime start, long user);
-    Task FinishCurrentDisease(DateTime end, long user);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="end"></param>
+    /// <param name="user"></param>
+    /// <returns>FALSE if disease alredy finished</returns>
+    Task<bool> FinishCurrentDisease(DateTime end, long user);
+
     Task<DiseaseDto?> GetCurrentDisease(long user);
+
+    Task<DiseaseDto?> GetDiseaseById(int id, long user);
+
+    Task<ICollection<DiseaseDto>> GetAllDiseases(long user);
 }
