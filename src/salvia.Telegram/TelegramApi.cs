@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Options;
 using salvia.Telegram.Handlers;
 using System;
+using System.Collections;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot;
@@ -51,17 +53,29 @@ internal class TelegramApi : ITelegramApi
 
     private async Task UpdateHandler(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
     {
+        var chat = update.Message?.Chat;
+        if (chat is null)
+        {
+            return;
+        }
+
         await using var scope = _serviceProvider.CreateAsyncScope();
         var handler = scope.ServiceProvider.GetRequiredService<ITelegramUpdateHandler>();
         var response = await handler.HandleUpdate(update);
 
         if (!string.IsNullOrEmpty(response.Message))
         {
-            await _botClient.SendMessage(update.Message.Chat, response.Message);
+            await _botClient.SendMessage(chat, response.Message);
+        }
+
+        if (response.Image is not null)
+        {
+            using var stream = new MemoryStream(response.Image);
+            await _botClient.SendPhoto(chat, stream);
         }
     }
 
-    
+
     private Task ErrorHandler(ITelegramBotClient botClient, Exception error, CancellationToken cancellationToken)
     {
         var ErrorMessage = error switch

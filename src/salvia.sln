@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "salvia.Data", "salvia.Data\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "salvia.Core", "salvia.Core\salvia.Core.csproj", "{0F8201FD-5615-47AE-9896-5ADB689EBF6F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlotWrapper", "PlotWrapper\PlotWrapper.csproj", "{9B75C5C5-B3FD-433C-9A88-92FC80ACE477}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{0F8201FD-5615-47AE-9896-5ADB689EBF6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F8201FD-5615-47AE-9896-5ADB689EBF6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F8201FD-5615-47AE-9896-5ADB689EBF6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B75C5C5-B3FD-433C-9A88-92FC80ACE477}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B75C5C5-B3FD-433C-9A88-92FC80ACE477}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B75C5C5-B3FD-433C-9A88-92FC80ACE477}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B75C5C5-B3FD-433C-9A88-92FC80ACE477}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

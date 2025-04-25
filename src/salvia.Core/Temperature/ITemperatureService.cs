@@ -1,6 +1,6 @@
 ﻿using salvia.Data.Dto;
 
-namespace salvia.Core;
+namespace salvia.Core.Temperature;
 
 public interface ITemperatureService
 {

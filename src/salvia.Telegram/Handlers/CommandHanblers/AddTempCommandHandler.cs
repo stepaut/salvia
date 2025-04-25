@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using static salvia.Telegram.BotResources;
 
@@ -12,7 +13,8 @@ internal sealed class AddTempCommandHandler : BotCommandHanblerBase
 
     protected override async Task Hanlde()
     {
-        if (float.TryParse(_parameters.Parameter, out var temp))
+        var value = _parameters.Parameter?.Replace(',', '.');
+        if (float.TryParse(value, CultureInfo.InvariantCulture, out var temp))
         {
             var diseaseCreated = await _temperatureService.AddTemperature(DateTime.Now, temp, _parameters.UserId);
 

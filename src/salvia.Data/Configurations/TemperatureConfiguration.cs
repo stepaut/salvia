@@ -11,7 +11,7 @@ internal class TemperatureConfiguration : IEntityTypeConfiguration<TemperatureEn
         builder.HasKey(x => x.Id);
 
         builder.HasOne(t => t.Disease)
-            .WithMany(d => d.Temperatures)
-            .HasForeignKey(t => t.DiseaseId);
+               .WithMany(d => d.Temperatures)
+               .HasForeignKey(t => t.DiseaseId);
     }
 }

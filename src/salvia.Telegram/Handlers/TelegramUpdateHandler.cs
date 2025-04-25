@@ -1,4 +1,6 @@
-﻿using salvia.Core;
+﻿using salvia.Core.Disease;
+using salvia.Core.Plot;
+using salvia.Core.Temperature;
 using System;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
@@ -12,13 +14,15 @@ internal class TelegramUpdateHandler : ITelegramUpdateHandler
     private readonly IDiseaseService _diseaseService;
     private readonly ITemperatureService _temperatureService;
     private readonly IUserService _userService;
+    private readonly IPlotGenerator _plotGenerator;
 
 
-    public TelegramUpdateHandler(IDiseaseService diseaseService, ITemperatureService temperatureService, IUserService userService)
+    public TelegramUpdateHandler(IDiseaseService diseaseService, ITemperatureService temperatureService, IUserService userService, IPlotGenerator plotGenerator)
     {
         _diseaseService = diseaseService;
         _temperatureService = temperatureService;
         _userService = userService;
+        _plotGenerator = plotGenerator;
     }
 
 
@@ -67,7 +71,7 @@ internal class TelegramUpdateHandler : ITelegramUpdateHandler
             UserId = user.Id,
         };
 
-        var enviroment = new BotCommandEnviroment(parameters, _diseaseService, _temperatureService);
+        var enviroment = new BotCommandEnviroment(parameters, _diseaseService, _temperatureService, _plotGenerator);
 
         var handler = BotCommandHanblerFactory.Create(enviroment);
         var response = await handler.HandleCommand();

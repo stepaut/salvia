@@ -48,6 +48,14 @@ internal sealed class GetTempsCommandHandler : BotCommandHanblerBase
         }
 
         var temps = await _temperatureService.GetAllTemperaturesInDisease(findedDis.Id, _parameters.UserId);
-        _reply = temps.Count > 0 ? string.Join("\n", temps.OrderBy(x => x.Date)) : R_NO_TEMPS;
+        if (temps.Count == 0)
+        {
+            _reply = R_NO_TEMPS;
+            return;
+        }
+
+        _reply = string.Join("\n", temps.OrderBy(x => x.Date));
+        var plot = _plotGenerator.GenerateByTemperatures(temps);
+        _image = plot.GetData();
     }
 }

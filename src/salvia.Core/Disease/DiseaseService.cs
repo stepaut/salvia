@@ -1,7 +1,7 @@
 ﻿using salvia.Data.Dto;
 using salvia.Data.Repositories;
 
-namespace salvia.Core;
+namespace salvia.Core.Disease;
 
 internal class DiseaseService(IDiseaseRepository _diseaseRepository) : IDiseaseService
 {
@@ -40,7 +40,7 @@ internal class DiseaseService(IDiseaseRepository _diseaseRepository) : IDiseaseS
             current.End = end;
             await _diseaseRepository.Update(current);
         }
-        
+
         await _diseaseRepository.Save();
 
         return true;

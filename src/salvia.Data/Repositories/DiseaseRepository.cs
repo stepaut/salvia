@@ -8,17 +8,30 @@ using System.Threading.Tasks;
 
 namespace salvia.Data.Repositories;
 
-internal class DiseaseRepository(DiseaseDbContext _context) : IDiseaseRepository
+internal class DiseaseRepository : IDiseaseRepository
 {
+    private readonly DiseaseDbContext _context;
+    
+
+    public DiseaseRepository(DiseaseDbContext context)
+    {
+        _context = context;
+    }
+
+
     public async Task Create(DiseaseDto item)
     {
         var entity = item.Adapt<DiseaseEntity>();
-        await _context.Diseases.AddAsync(entity);
+
+        await _context.Diseases
+            .AddAsync(entity);
     }
 
     public async Task Delete(int id)
     {
-        await _context.Diseases.Where(x => x.Id == id).ExecuteDeleteAsync();
+        await _context.Diseases
+            .Where(x => x.Id == id)
+            .ExecuteDeleteAsync();
     }
 
     public async Task Save()
@@ -28,33 +41,44 @@ internal class DiseaseRepository(DiseaseDbContext _context) : IDiseaseRepository
 
     public async Task<DiseaseDto?> TryGetItem(int id)
     {
-        var entity = await _context.Diseases.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+        var entity = await _context.Diseases
+            .AsNoTracking()
+            .Include(x => x.Temperatures)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
         if (entity is null)
         {
             return null;
         }
 
-        var dto = entity.Adapt<DiseaseDto>();
-        dto.TempsCount = entity.Temperatures.Count;
-
-        return dto;
+        return CreateDiseaseDto(entity);
     }
 
     public Task Update(DiseaseDto item)
     {
         var entity = item.Adapt<DiseaseEntity>();
-        _context.Diseases.Update(entity);
+
+        _context.Diseases
+            .Update(entity);
 
         return Task.CompletedTask;
     }
 
     public async Task<ICollection<DiseaseDto>> GetAll(long commonKey)
     {
-        return await _context.Diseases
+        var entiies = await _context.Diseases
                             .Where(x => x.UserId == commonKey)
-                            .AsNoTracking()
-                            .Select(x => x.Adapt<DiseaseDto>())
+                            .Include(x => x.Temperatures)
                             .ToListAsync();
+
+        return entiies.Select(CreateDiseaseDto).ToList();
+    }
+
+    private static DiseaseDto CreateDiseaseDto(DiseaseEntity entity)
+    {
+        var dto = entity.Adapt<DiseaseDto>();
+        dto.TempsCount = entity.Temperatures.Count;
+
+        return dto;
     }
 }
-

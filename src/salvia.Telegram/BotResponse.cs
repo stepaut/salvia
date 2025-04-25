@@ -2,5 +2,6 @@
 
 public class BotResponse
 {
-    public string Message { get; set; } = string.Empty;
+    public string Message { get; init; } = string.Empty;
+    public byte[]? Image { get; init; }
 }
