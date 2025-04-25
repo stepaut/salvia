@@ -11,7 +11,7 @@ public interface IGetAllRepository<TItem, TCCommonKey>
 public interface IRepository<TItem, TKey>
 {
     Task<TItem?> TryGetItem(TKey id);
-    Task Create(TItem item);
+    Task<TItem> Create(TItem item);
     Task Update(TItem item);
     Task Delete(TKey id);
     Task Save();

@@ -19,12 +19,13 @@ internal class DiseaseRepository : IDiseaseRepository
     }
 
 
-    public async Task Create(DiseaseDto item)
+    public async Task<DiseaseDto> Create(DiseaseDto item)
     {
         var entity = item.Adapt<DiseaseEntity>();
 
-        await _context.Diseases
-            .AddAsync(entity);
+        var newEntity = await _context.Diseases.AddAsync(entity);
+        await _context.SaveChangesAsync();
+        return CreateDiseaseDto(entity);
     }
 
     public async Task Delete(int id)

@@ -1,11 +1,10 @@
 ﻿using salvia.Core.Disease;
 using salvia.Core.Plot;
 using salvia.Core.Temperature;
-using System;
+using salvia.Data.Entities;
+using System.IO;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
-using static salvia.Telegram.BotResources;
 
 namespace salvia.Telegram.Handlers;
 
@@ -26,42 +25,19 @@ internal class TelegramUpdateHandler : ITelegramUpdateHandler
     }
 
 
-    public async Task<BotResponse> HandleUpdate(Update update)
+    public async Task<BotResponse> HandleDocument(User user, Stream stream)
     {
-        try
+        var response = await _diseaseService.ImportDisease(stream, user.Id);
+        if (response.Success)
         {
-            switch (update.Type)
-            {
-                case UpdateType.Message:
-                    return await ResolveMessage(update);
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.ToString());
+            return new BotResponse() { Message = string.Format(BotResources.R_SUCCESS_IMPORT_DISEASE, response.ImportedDisease!.Id) };
         }
 
-        return new BotResponse();
+        return new BotResponse() { Message = response.ErrorMessage ?? BotResources.R_FAILED };
     }
 
-    private async Task<BotResponse> ResolveTextMessage(User user, string? message)
+    public async Task<BotResponse> HandleCommand(User user, string command, string? parameter)
     {
-        if (!await ValidateUser(user))
-        {
-            return new BotResponse() { Message = R_NOT_ALLOWED };
-        }
-
-        var elements = message?.Split(' ');
-        if (elements is null || elements.Length == 0)
-        {
-            return new BotResponse() { Message = R_DEFAULT };
-        }
-
-        var command = elements[0];
-        var parameter = elements.Length >= 2 ? elements[1] : null;
-
         var parameters = new BotCommandParameters()
         {
             Command = command,
@@ -77,32 +53,8 @@ internal class TelegramUpdateHandler : ITelegramUpdateHandler
         return response;
     }
 
-    private async Task<BotResponse> ResolveMessage(Update update)
+    public async Task<UserDto> GetUserInfo(User user)
     {
-        var message = update.Message;
-        if (message is null)
-        {
-            throw new Exception("message is null.");
-        }
-
-        var user = message.From;
-        if (user is null)
-        {
-            throw new Exception("user is null.");
-        }
-
-        switch (message.Type)
-        {
-            case MessageType.Text:
-                return await ResolveTextMessage(user, message.Text);
-            default:
-                return new BotResponse() { Message = R_DEFAULT };
-        }
-    }
-
-    private async Task<bool> ValidateUser(User user)
-    {
-        var userWhiteListed = await _userService.IsUserWhiteListed(user.Id);
-        return userWhiteListed;
+        return await _userService.GetUserInfo(user.Id);
     }
 }

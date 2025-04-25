@@ -21,21 +21,14 @@ internal class UserService : IUserService
     }
 
 
-    public async Task<bool> IsUserWhiteListed(long user)
+    public async Task<UserDto> GetUserInfo(long user)
     {
-        var cached = _userCache.FindInWhiteList(user);
-        if (cached.HasValue)
-        {
-            return cached.Value;
-        }
-
         var userDto = await _userRepository.TryGetItem(user);
         if (userDto is null)
         {
             userDto = new UserDto()
             {
                 Id = user,
-                IsWhiteListed = false,
                 StartUsing = DateTime.Now,
             };
 
@@ -43,16 +36,11 @@ internal class UserService : IUserService
             await _userRepository.Save();
         }
 
-        if (_botConfig.UseWhiteList)
+        if (_botConfig.UseWhiteList && !userDto.IsWhiteListed)
         {
-            _userCache.AddInWhiteList(user, userDto.IsWhiteListed);
-
-            if (!userDto.IsWhiteListed)
-            {
-                return false;
-            }
+            _userCache.AddInBan(user);
         }
 
-        return true;
+        return userDto;
     }
 }

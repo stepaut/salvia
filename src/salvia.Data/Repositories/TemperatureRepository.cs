@@ -10,10 +10,12 @@ namespace salvia.Data.Repositories;
 
 internal class TemperatureRepository(DiseaseDbContext _context) : ITemperatureRepository
 {
-    public async Task Create(TemperatureDto item)
+    public async Task<TemperatureDto> Create(TemperatureDto item)
     {
         var entity = item.Adapt<TemperatureEntity>();
-        await _context.Temperatures.AddAsync(entity);
+        var newEntity = await _context.Temperatures.AddAsync(entity);
+        await _context.SaveChangesAsync();
+        return newEntity.Adapt<TemperatureDto>();
     }
 
     public async Task Delete(int id)

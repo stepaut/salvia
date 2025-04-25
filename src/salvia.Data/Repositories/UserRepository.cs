@@ -8,10 +8,12 @@ namespace salvia.Data.Repositories;
 
 internal class UserRepository(DiseaseDbContext _context) : IUserRepository
 {
-    public async Task Create(UserDto item)
+    public async Task<UserDto> Create(UserDto item)
     {
         var entity = item.Adapt<UserEntity>();
-        await _context.Users.AddAsync(entity);
+        var newEntity = await _context.Users.AddAsync(entity);
+        await _context.SaveChangesAsync();
+        return newEntity.Adapt<UserDto>();
     }
 
     public async Task Delete(long id)

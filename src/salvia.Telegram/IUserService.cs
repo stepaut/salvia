@@ -1,8 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using salvia.Data.Entities;
+using System.Threading.Tasks;
 
 namespace salvia.Telegram;
 
 public interface IUserService
 {
-    Task<bool> IsUserWhiteListed(long user);
+    Task<UserDto> GetUserInfo(long user);
 }

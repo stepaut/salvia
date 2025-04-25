@@ -3,8 +3,17 @@ using salvia.Data.Repositories;
 
 namespace salvia.Core.Disease;
 
-internal class DiseaseService(IDiseaseRepository _diseaseRepository) : IDiseaseService
+internal class DiseaseService : IDiseaseService
 {
+    private readonly IDiseaseRepository _diseaseRepository;
+    private readonly ITemperatureRepository _temperatureRepository;
+
+    public DiseaseService(IDiseaseRepository diseaseRepository, ITemperatureRepository temperatureRepository)
+    {
+        _diseaseRepository = diseaseRepository;
+        _temperatureRepository = temperatureRepository;
+    }
+
     public async Task<DiseaseDto> AddNewAndFinishCurrentDisease(DateTime start, long user)
     {
         await FinishCurrentDisease(start, user);
@@ -82,5 +91,33 @@ internal class DiseaseService(IDiseaseRepository _diseaseRepository) : IDiseaseS
         }
 
         return dis;
+    }
+
+    public async Task<ImportDiseaseResponse> ImportDisease(Stream stream, long user)
+    {
+        using var parser = new DiseaseParser();
+        try
+        {
+            parser.Parse(stream);
+        }
+        catch (Exception ex)
+        {
+            return new ImportDiseaseResponse() { Success = false, ErrorMessage = ex.Message };
+        }
+
+        var diseaseRaw = parser.GetDisease();
+        diseaseRaw.UserId = user;
+
+        var disease = await _diseaseRepository.Create(diseaseRaw);
+
+        var temps = parser.GetTemperatures();
+
+        foreach (var temp in temps)
+        {
+            temp.DiseaseId = disease.Id;
+            await _temperatureRepository.Create(temp);
+        }
+
+        return new ImportDiseaseResponse() { Success = true, ImportedDisease = disease };
     }
 }

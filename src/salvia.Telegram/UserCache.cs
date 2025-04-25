@@ -4,20 +4,15 @@ namespace salvia.Telegram;
 
 internal class UserCache : IUserCache
 {
-    private readonly Dictionary<long, bool> _whiteListCache = new();
+    private readonly HashSet<long> _bansCache = new();
 
-    public void AddInWhiteList(long user, bool isWhiteListed)
+    public void AddInBan(long user)
     {
-        _whiteListCache[user] = isWhiteListed;
+        _bansCache.Add(user);
     }
 
-    public bool? FindInWhiteList(long user)
+    public bool InBan(long user)
     {
-        if (_whiteListCache.TryGetValue(user, out var result))
-        {
-            return result;
-        }
-
-        return null;
+        return _bansCache.Contains(user);
     }
 }

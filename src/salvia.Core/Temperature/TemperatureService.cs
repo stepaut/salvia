@@ -23,7 +23,7 @@ internal class TemperatureService : ITemperatureService
     {
         temperature = MathF.Round(temperature, 1);
 
-        var tempValidated = ValidateTemperature(temperature);
+        var tempValidated = ITemperatureService.ValidateTemperature(temperature);
         if (!tempValidated)
         {
             return new AddingTemperatureResponse()
@@ -72,16 +72,8 @@ internal class TemperatureService : ITemperatureService
             throw new Exception($"Disease with id {disease} doesn't belong to user {user}.");
         }
 
-        return await _temperatureRepository.GetAll(disease);
-    }
+        var temps = await _temperatureRepository.GetAll(disease);
 
-    private static bool ValidateTemperature(float temperature)
-    {
-        if (temperature < CoreConstants.MIN_TEMP ||  temperature > CoreConstants.MAX_TEMP)
-        {
-            return false;
-        }
-
-        return true;
+        return temps.OrderBy(x => x.Date).ToList();
     }
 }

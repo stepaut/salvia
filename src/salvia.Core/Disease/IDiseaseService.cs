@@ -19,4 +19,11 @@ public interface IDiseaseService
     Task<DiseaseDto?> GetDiseaseById(int id, long user);
 
     Task<ICollection<DiseaseDto>> GetAllDiseases(long user);
+
+    Task<ImportDiseaseResponse> ImportDisease(Stream stream, long user);
+}
+
+public class ImportDiseaseResponse : ResponseBase
+{
+    public DiseaseDto? ImportedDisease { get; init; }
 }

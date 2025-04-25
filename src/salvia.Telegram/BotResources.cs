@@ -26,7 +26,9 @@ internal static class BotResources
     public const string R_NO_TEMPS = "No temperatures in disease";
     public const string R_NO_DISEASES = "No diseases";
     public const string R_NOT_ALLOWED = "You are not allowed to using this bot";
+    public const string R_NOT_ALLOWED_UPLOAD = "You are not allowed to upload files";
     public const string R_FAILED = "Something get wrong";
+    public const string R_SUCCESS_IMPORT_DISEASE = "Successfully imported disease {0}";
 
     public const string R_HELP = $"List of commands:\n" +
         $"{C_START_DISEASE} - Start new disease\n" +
