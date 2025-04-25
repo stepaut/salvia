@@ -34,8 +34,6 @@ internal class TelegramUpdateHandler : ITelegramUpdateHandler
             {
                 case UpdateType.Message:
                     return await ResolveMessage(update);
-                case UpdateType.CallbackQuery:
-                    //return await ResolveCallbackQuery(update);
                 default:
                     throw new NotImplementedException();
             }

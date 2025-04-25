@@ -19,8 +19,20 @@ internal class TemperatureService : ITemperatureService
     }
 
 
-    public async Task<bool> AddTemperature(DateTime date, float temperature, long user)
+    public async Task<AddingTemperatureResponse> AddTemperature(DateTime date, float temperature, long user)
     {
+        temperature = MathF.Round(temperature, 1);
+
+        var tempValidated = ValidateTemperature(temperature);
+        if (!tempValidated)
+        {
+            return new AddingTemperatureResponse()
+            {
+                Success = false,
+                ErrorMessage = string.Format(CoreResources.TEMP_NOT_VALIDATED, CoreConstants.MIN_TEMP, CoreConstants.MAX_TEMP)
+            };
+        }
+
         var diseaseCreated = false;
         var currentDisease = await _diseaseService.GetCurrentDisease(user);
 
@@ -40,7 +52,11 @@ internal class TemperatureService : ITemperatureService
         await _temperatureRepository.Create(temperatureDto);
         await _temperatureRepository.Save();
 
-        return diseaseCreated;
+        return new AddingTemperatureResponse()
+        {
+            Success = true,
+            DiseasesCreated = diseaseCreated,
+        };
     }
 
     public async Task<ICollection<TemperatureDto>> GetAllTemperaturesInDisease(int disease, long user)
@@ -57,5 +73,15 @@ internal class TemperatureService : ITemperatureService
         }
 
         return await _temperatureRepository.GetAll(disease);
+    }
+
+    private static bool ValidateTemperature(float temperature)
+    {
+        if (temperature < CoreConstants.MIN_TEMP ||  temperature > CoreConstants.MAX_TEMP)
+        {
+            return false;
+        }
+
+        return true;
     }
 }

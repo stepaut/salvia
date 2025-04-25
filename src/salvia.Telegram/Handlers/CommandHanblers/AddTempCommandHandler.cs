@@ -13,16 +13,25 @@ internal sealed class AddTempCommandHandler : BotCommandHanblerBase
 
     protected override async Task Hanlde()
     {
-        var value = _parameters.Parameter?.Replace(',', '.');
-        if (float.TryParse(value, CultureInfo.InvariantCulture, out var temp))
-        {
-            var diseaseCreated = await _temperatureService.AddTemperature(DateTime.Now, temp, _parameters.UserId);
-
-            _reply = diseaseCreated ? $"{R_DISEASE_STARTED}\n{R_TEMP_ADDED}" : R_TEMP_ADDED;
-        }
-        else
+        if (!float.TryParse(_parameters.Parameter?.Replace(',', '.'), CultureInfo.InvariantCulture, out var temp))
         {
             _reply = R_DEFAULT;
+            return;
         }
+
+        var response = await _temperatureService.AddTemperature(DateTime.Now, temp, _parameters.UserId);
+
+        if (!response.Success)
+        {
+            _reply = response.ErrorMessage ?? R_FAILED;
+            return;
+        }
+
+        _reply = string.Empty;
+        if (response.DiseasesCreated)
+        {
+            _reply += $"{R_DISEASE_STARTED}\n";
+        }
+        _reply += R_TEMP_ADDED; 
     }
 }
